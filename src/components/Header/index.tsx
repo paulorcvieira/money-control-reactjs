@@ -3,6 +3,7 @@ import { useAuth } from '../../hooks'
 import logo from '../../assets/logo.svg'
 
 import * as S from './styles'
+import { useCallback } from 'react'
 
 type HeaderProps = {
   onOpenNewTransactionModal: () => void
@@ -11,9 +12,7 @@ type HeaderProps = {
 export const Header = ({ onOpenNewTransactionModal }: HeaderProps) => {
   const { Logout } = useAuth();
 
-  const handleLogout = () => {
-    Logout();
-  }
+  const handleLogout = useCallback(() => Logout(), [Logout])
 
   return (
     <S.Container>

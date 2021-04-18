@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 import Modal from "react-modal";
 
 import closeImg from "../../assets/close.svg";
@@ -24,10 +24,10 @@ interface FormValues {
 
 type FormObjectValue = "title" | "value" | "category";
 
-export function NewTransactionModal({
+export const NewTransactionModal = ({
   isOpen,
   onRequestClose
-}: NewTransactionModalProps) {
+}: NewTransactionModalProps) => {
   const [type, setType] = useState<Type>("deposit");
   const [values, setValues] = useState<FormValues>({
     title: "",
@@ -37,24 +37,24 @@ export function NewTransactionModal({
 
   const { createTransaction } = useTransactions();
 
-  function handleSetTypeDeposit() {
+  const handleSetTypeDeposit = useCallback(() => {
     setType("deposit");
-  }
+  }, [])
 
-  function handleSetTypeWithdraw() {
+  const handleSetTypeWithdraw = useCallback(() => {
     setType("withdraw");
-  }
+  }, [])
 
-  function handleChange(prop: FormObjectValue, value: string | number) {
+  const handleChange = useCallback((prop: FormObjectValue, value: string | number) => {
     setValues({ ...values, [prop]: value });
-  }
+  }, [values])
 
-  function clearValues() {
+  const clearValues = useCallback(() => {
     setValues({ title: "", category: "", value: 0 });
     setType("deposit");
-  }
+  }, [])
 
-  function handleCreateNewTransaction(event: FormEvent) {
+  const handleCreateNewTransaction = useCallback((event: FormEvent) => {
     event.preventDefault();
 
     const data = {
@@ -74,7 +74,7 @@ export function NewTransactionModal({
           "Não foi possível criar um cadastro de transação. Tente novamente mais tarde"
         )
       );
-  }
+  }, [clearValues, createTransaction, onRequestClose, type, values.category, values.title, values.value])
 
   return (
     <Modal

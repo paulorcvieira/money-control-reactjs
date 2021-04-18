@@ -2,7 +2,7 @@ import { Summary } from "../../components/Summary";
 import { TransactionsTable } from "../../components/TransactionsTable";
 import { Container } from "./styles";
 
-export function Dashboard() {
+export const Dashboard = () => {
   return (
     <Container>
       <Summary />

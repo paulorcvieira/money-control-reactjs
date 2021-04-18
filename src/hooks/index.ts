@@ -1,11 +1,11 @@
-import { useContext } from "react";
-import { AuthContext } from "../contexts/Auth";
-import { TransactionsContext } from "../contexts/Transactions";
+import { useContext } from "react"
+import { AuthContext } from "../contexts/Auth"
+import { TransactionsContext } from "../contexts/Transactions"
 
-export function useTransactions() {
-  return useContext(TransactionsContext);
+export const useTransactions = () => {
+  return useContext(TransactionsContext)
 }
 
-export function useAuth() {
-  return useContext(AuthContext);
+export const useAuth = () => {
+  return useContext(AuthContext)
 }

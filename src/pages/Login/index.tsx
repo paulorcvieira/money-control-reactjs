@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import logoImg from "../../assets/logo.svg";
 import { useAuth } from "../../hooks";
@@ -12,18 +12,18 @@ interface FormValues {
 
 type FormObjectValue = "username" | "password";
 
-export function Login() {
+export const Login = () => {
   const [values, setValues] = useState<FormValues>({
     username: "",
     password: ""
   });
   const { Authenticate } = useAuth();
 
-  function handleChange(prop: FormObjectValue, value: string | number) {
+  const handleChange = useCallback((prop: FormObjectValue, value: string | number) => {
     setValues({ ...values, [prop]: value });
-  }
+  }, [values])
 
-  function handleSubmit(ev: FormEvent) {
+  const handleSubmit = useCallback((ev: FormEvent) => {
     ev.preventDefault();
 
     const { username, password } = values;
@@ -32,7 +32,7 @@ export function Login() {
       username,
       password
     });
-  }
+  }, [Authenticate, values])
 
   return (
     <Container>

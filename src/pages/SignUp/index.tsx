@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react"
+import { FormEvent, useCallback, useState } from "react"
 import { Link } from "react-router-dom"
 import logoImg from "../../assets/logo.svg"
 import { useAuth } from "../../hooks"
@@ -12,19 +12,19 @@ interface FormValues {
 
 type FormObjectValue = "username" | "password"
 
-export function SignUp() {
+export const SignUp = () => {
   const [values, setValues] = useState<FormValues>({
     username: "",
     password: ""
   });
   const { Register } = useAuth()
 
-  function handleChange(prop: FormObjectValue, value: string | number) {
+  const handleChange = useCallback((prop: FormObjectValue, value: string | number) => {
     setValues({ ...values, [prop]: value })
-  }
+  }, [values])
 
-  function handleSubmit(ev: FormEvent) {
-    ev.preventDefault()
+  const handleSubmit = useCallback((event: FormEvent) => {
+    event.preventDefault()
 
     const { username, password } = values;
 
@@ -32,7 +32,7 @@ export function SignUp() {
       username,
       password
     })
-  }
+  }, [Register, values])
 
   return (
     <Container>
@@ -44,13 +44,13 @@ export function SignUp() {
         <input
           placeholder="Usuário"
           value={values.username}
-          onChange={ev => handleChange("username", ev.target.value)}
+          onChange={event => handleChange("username", event.target.value)}
         />
         <input
           type="password"
           placeholder="Senha"
           value={values.password}
-          onChange={ev => handleChange("password", ev.target.value)}
+          onChange={event => handleChange("password", event.target.value)}
         />
 
         <button type="submit">Fazer o registro</button>

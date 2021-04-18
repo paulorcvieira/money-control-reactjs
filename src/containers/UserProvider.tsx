@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import { AuthContext, User, UserInput } from "../contexts/Auth";
 import { api } from "../services/api";
@@ -16,7 +16,7 @@ export function UserProvider({ children }: AuthProviderProps) {
   const [signed, setSigned] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
 
-  async function Authenticate(user: UserInput) {
+  const Authenticate = useCallback(async (user: UserInput) => {
     return api
       .post<AuthenticateResponseProps>("/auth", user)
       .then(response => {
@@ -30,9 +30,9 @@ export function UserProvider({ children }: AuthProviderProps) {
       .catch(() => {
         toast.error("Erro no sistema de login.");
       });
-  }
+  }, [])
 
-  async function Register(user: UserInput) {
+  const Register = useCallback(async (user: UserInput) => {
     return api
       .post<AuthenticateResponseProps>("/signup", user)
       .then(response => {
@@ -46,12 +46,12 @@ export function UserProvider({ children }: AuthProviderProps) {
       .catch(() => {
         toast.error("Erro no sistema de login.");
       });
-  }
+  }, [])
 
-  async function Logout() {
+  const Logout = useCallback(async () => {
     setUser(null);
     setSigned(false);
-  }
+  }, [])
 
   return (
     <AuthContext.Provider

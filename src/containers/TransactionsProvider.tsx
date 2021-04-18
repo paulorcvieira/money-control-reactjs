@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { Type } from "../components/NewTransactionModal";
 import { TransactionsContext } from "../contexts/Transactions";
 import { useAuth } from "../hooks";
@@ -35,7 +35,7 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
   const { user, signed } = useAuth();
   const [transactions, setTransactions] = useState<TransactionItemProps[]>([]);
 
-  async function createTransaction(transaction: NewTransactionInput) {
+  const createTransaction = useCallback(async (transaction: NewTransactionInput) => {
     const response = await api.post<TransactionResponseProps>(
       "/transactions",
       transaction,
@@ -47,7 +47,7 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
       }
     );
     return setTransactions([...transactions, response.data.transaction]);
-  }
+  }, [transactions, user?.username, user?.token])
 
   useEffect(() => {
     if (signed) {

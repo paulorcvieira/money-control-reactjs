@@ -2,7 +2,7 @@ import { belongsTo, createServer, Model } from "miragejs";
 import jwt from "jsonwebtoken";
 import { hashSync, compareSync } from "bcryptjs";
 
-const SECRET_KEY = "123456";
+const SECRET_KEY = "123456789";
 
 interface TokenResponseProps {
   username: string;

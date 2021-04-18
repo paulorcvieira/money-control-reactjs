@@ -3,7 +3,7 @@ import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import { Login } from "../pages/Login";
 import { SignUp } from "../pages/SignUp";
 
-export function Public() {
+export const Public = () => {
   return (
     <BrowserRouter>
       <Switch>

@@ -5,17 +5,17 @@ import { Dashboard } from "../pages/Dashboard"
 import { Header } from "../components/Header"
 import { NewTransactionModal } from "../components/NewTransactionModal"
 
-export function Private() {
+export const Private = () => {
   const [
     isNewTransactionModalOpen,
     setIsNewTransactionModalOpen
   ] = useState<boolean>(false)
 
-  function handleOpenNewTransactionModal() {
+  const handleOpenNewTransactionModal = () => {
     setIsNewTransactionModalOpen(true)
   }
 
-  function handleCloseNewTransactionModal() {
+  const handleCloseNewTransactionModal = () => {
     setIsNewTransactionModalOpen(false)
   }
 

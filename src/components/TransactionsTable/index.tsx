@@ -1,23 +1,9 @@
-import { useEffect, useState } from "react";
-import { api } from "../../services/api";
-import * as S from "./styles";
+import { useTransactions } from "../../hooks"
 
-type Transactions = {
-  id: number
-  title: string
-  amount: number
-  type: string
-  category: string
-  createdAt: string
-}
+import * as S from "./styles"
 
 export const TransactionsTable = () => {
-  const [transactions, setTransactions] = useState<Transactions[]>([])
-
-  useEffect(() => {
-    api.get('http://localhost:3000/api/transactions')
-      .then(response => setTransactions(response.data.transactions))
-  }, [])
+  const { transactions } = useTransactions()
 
   return (
     <S.Container>
@@ -31,23 +17,24 @@ export const TransactionsTable = () => {
           </tr>
         </thead>
         <tbody>
-            {transactions.map((transition) => (
-              <tr key={transition.id}>
-                <td>{transition.title}</td>
-                <td className={transition.type}>
-                  {new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL'
-                  }).format(transition.amount)}
-                </td>
-                <td>{transition.category}</td>
-                <td>
-                  {new Intl.DateTimeFormat('pt-BR').format(
-                    new Date(transition.createdAt)
-                  )}
-                </td>
-              </tr>
-            ))}
+          {transactions.map(transaction => (
+            <tr key={transaction.id}>
+              <td>{transaction.title}</td>
+              <td className={transaction.type}>
+                {transaction.type === "withdraw" && "-"}{" "}
+                {new Intl.NumberFormat("pt-BR", {
+                  currency: "BRL",
+                  style: "currency"
+                }).format(transaction.amount)}
+              </td>
+              <td>{transaction.category}</td>
+              <td>
+                {new Intl.DateTimeFormat("pt-BR").format(
+                  new Date(transaction.createdAt)
+                )}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </S.Container>

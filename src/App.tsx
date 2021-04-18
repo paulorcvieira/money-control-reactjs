@@ -1,33 +1,21 @@
-import { useCallback, useState } from 'react'
+import Modal from "react-modal"
+import { ToastContainer } from "react-toastify"
 
-import { Dashboard } from './components/Dashboard';
-import { Header } from './components/Header';
-import { NewTransactionModal } from './components/NewTransactionModal';
+import { TransactionsProvider } from "./containers/TransactionsProvider"
+import { GlobalStyle } from "./styles/global"
+import { UserProvider } from "./containers/UserProvider"
+import { Routes } from "./routes"
 
-import { GlobalStyle } from './styles/global';
+Modal.setAppElement("#root")
 
-function App() {
-  const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false)
-
-  const handleOpenNewTransaction = useCallback(() => {
-    setIsNewTransactionModalOpen(true)
-  }, [])
-
-  const handleCloseNewTransaction = useCallback(() => {
-    setIsNewTransactionModalOpen(false)
-  }, [])
-
+export const App = () => {
   return (
-    <>
-      <Header onOpenNewTransaction={handleOpenNewTransaction} />
-      <Dashboard />
-      <NewTransactionModal
-        isOpen={isNewTransactionModalOpen}
-        onRequestClose={handleCloseNewTransaction}
-      />
-      <GlobalStyle />
-    </>
-  );
+    <UserProvider>
+      <TransactionsProvider>
+        <Routes />
+        <ToastContainer />
+        <GlobalStyle />
+      </TransactionsProvider>
+    </UserProvider>
+  )
 }
-
-export default App;

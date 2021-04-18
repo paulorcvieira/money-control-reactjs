@@ -28,5 +28,9 @@ export const Content = styled.div`
     &:hover {
       filter: brightness(0.95);
     }
+
+    &.logout {
+      background: var(--red);
+    }
   }
 `

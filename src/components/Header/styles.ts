@@ -30,7 +30,7 @@ export const Content = styled.div`
     }
 
     &.logout {
-      background: var(--red);
+      background: var(--button-logout);
     }
   }
 `

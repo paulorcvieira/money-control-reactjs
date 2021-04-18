@@ -17,6 +17,8 @@ export const GlobalStyle = createGlobalStyle`
     --modal-input-border: #d7d7d7;
     --modal-overlay: rgba(0, 0, 0, 0.5);
 
+    --button-logout: #e52e4d;
+
     --text-title: #363f5f;
     --text-body: #9696b3;
     --text-white: #ffffff;

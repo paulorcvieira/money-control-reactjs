@@ -1,108 +1,135 @@
-import { FormEvent, useCallback, useState } from 'react'
-import Modal from 'react-modal'
+import { FormEvent, useState } from "react";
+import Modal from "react-modal";
 
-import * as S from './styles'
+import closeImg from "../../assets/close.svg";
+import incomeImg from "../../assets/income.svg";
+import outcomeImg from "../../assets/outcome.svg";
 
-import closeImg from '../../assets/close.svg'
-import incomeImg from '../../assets/income.svg'
-import outcomeImg from '../../assets/outcome.svg'
-import { api } from '../../services/api'
+import { useTransactions } from "../../hooks";
 
-type NewTransactionModalProps = {
-  isOpen: boolean
-  onRequestClose: () => void
+import * as S from "./styles";
+
+interface NewTransactionModalProps {
+  isOpen: boolean;
+  onRequestClose: () => void;
 }
 
-Modal.setAppElement('#root')
+export type Type = "deposit" | "withdraw";
 
-export const NewTransactionModal = ({
+interface FormValues {
+  title: string;
+  value: number;
+  category: string;
+}
+
+type FormObjectValue = "title" | "value" | "category";
+
+export function NewTransactionModal({
   isOpen,
-  onRequestClose,
-}: NewTransactionModalProps) => {
-  const [title, setTitle] = useState('')
-  const [value, setValue] = useState(0)
-  const [category, setCategory] = useState('')
-  const [type, setType] = useState('deposit')
+  onRequestClose
+}: NewTransactionModalProps) {
+  const [type, setType] = useState<Type>("deposit");
+  const [values, setValues] = useState<FormValues>({
+    title: "",
+    category: "",
+    value: 0
+  });
 
-  const handleCreateNewTransaction = useCallback((event: FormEvent) => {
-    event.preventDefault()
+  const { createTransaction } = useTransactions();
+
+  function handleSetTypeDeposit() {
+    setType("deposit");
+  }
+
+  function handleSetTypeWithdraw() {
+    setType("withdraw");
+  }
+
+  function handleChange(prop: FormObjectValue, value: string | number) {
+    setValues({ ...values, [prop]: value });
+  }
+
+  function clearValues() {
+    setValues({ title: "", category: "", value: 0 });
+    setType("deposit");
+  }
+
+  function handleCreateNewTransaction(event: FormEvent) {
+    event.preventDefault();
 
     const data = {
-      title,
-      value,
+      title: values.title,
       type,
-      category,
-    }
+      category: values.category,
+      amount: values.value
+    };
 
-    api.post('/transactions', data)
-  }, [title, type, value, category])
+    createTransaction(data)
+      .then(() => {
+        clearValues();
+        onRequestClose();
+      })
+      .catch(() =>
+        alert(
+          "Não foi possível criar um cadastro de transação. Tente novamente mais tarde"
+        )
+      );
+  }
 
   return (
-    <S.Container>
-      <Modal
-        isOpen={isOpen}
-        onRequestClose={onRequestClose}
-        overlayClassName="react-modal-overlay"
-        className="react-modal-content"
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      overlayClassName="react-modal-overlay"
+      className="react-modal-content"
+    >
+      <button
+        type="button"
+        onClick={onRequestClose}
+        className="react-modal-close"
       >
+        <img src={closeImg} alt="Fechar modal" />
+      </button>
+      <S.Form onSubmit={handleCreateNewTransaction}>
+        <h2>Cadastrar transação</h2>
+        <input
+          placeholder="Título"
+          value={values.title}
+          onChange={event => handleChange("title", event.target.value)}
+        />
+        <input
+          placeholder="Valor"
+          type="number"
+          onChange={event => handleChange("value", Number(event.target.value))}
+        />
 
-        <button
-          type="button"
-          onClick={onRequestClose}
-          className="react-modal-close"
-        >
-          <img src={closeImg} alt="Fechar modal" />
-        </button>
+        <S.TransactionTypeContainer>
+          <S.ButtonBox
+            type="button"
+            onClick={handleSetTypeDeposit}
+            isActive={type === "deposit"}
+            activeColor="deposit"
+          >
+            <img src={incomeImg} alt="Entrada" />
+            <span>Entrada</span>
+          </S.ButtonBox>
+          <S.ButtonBox
+            type="button"
+            onClick={handleSetTypeWithdraw}
+            isActive={type === "withdraw"}
+            activeColor="withdraw"
+          >
+            <img src={outcomeImg} alt="Saída" />
+            <span>Saída</span>
+          </S.ButtonBox>
+        </S.TransactionTypeContainer>
 
-        <S.Form onSubmit={handleCreateNewTransaction}>
-          <h2>Cadastrar Transação</h2>
-
-          <input
-            placeholder="Título"
-            value={title}
-            onChange={event => setTitle(event.target.value)}
-          />
-
-          <input
-            type="number"
-            placeholder="Valor"
-            value={value}
-            onChange={event => setValue(Number(event.target.value))}
-          />
-
-          <S.TransactionTypeContainer>
-            <S.ButtonBox
-              type="button"
-              onClick={() => setType('deposit')}
-              isActive={type === 'deposit'}
-              activeColor="deposit"
-            >
-              <img src={incomeImg} alt="Entrada" />
-              <span>Entrada</span>
-            </S.ButtonBox>
-
-            <S.ButtonBox
-              type="button"
-              onClick={() => setType('withdraw')}
-              isActive={type === 'withdraw'}
-              activeColor="withdraw"
-            >
-              <img src={outcomeImg} alt="Saída" />
-              <span>Saída</span>
-            </S.ButtonBox>
-          </S.TransactionTypeContainer>
-
-          <input
-            placeholder="Categoria"
-            value={category}
-            onChange={event => setCategory(event.target.value)}
-          />
-
-          <button type="submit">
-            Cadastrar
-          </button>
-        </S.Form>
-      </Modal>
-    </S.Container>
-  )
+        <input
+          placeholder="Categoria"
+          onChange={event => handleChange("category", event.target.value)}
+        />
+        <button type="submit">Cadastrar</button>
+      </S.Form>
+    </Modal>
+  );
 }
